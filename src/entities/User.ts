@@ -1,48 +1,50 @@
-import { IsEmail, Length } from "class-validator";
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Index, CreateDateColumn, UpdateDateColumn, BeforeInsert } from "typeorm";
-import bcrypt from 'bcrypt';
-import { classToPlain, Exclude } from 'class-transformer';
+import { IsEmail, Length } from 'class-validator'
+import {
+  Entity as TOEntity,
+  Column,
+  Index,
+  BeforeInsert,
+  OneToMany,
+} from 'typeorm'
+import bcrypt from 'bcrypt'
+import { Exclude } from 'class-transformer'
+
+import Entity from './Entity'
+import Post from './Post'
+import Vote from './Vote'
 
 
-@Entity("users")
-export class User extends BaseEntity {
+@TOEntity('users')
+export default class User extends Entity {
+  constructor(user: Partial<User>) {
+    super()
+    Object.assign(this, user)
+  }
 
-    constructor(user: Partial<User>) {
-        super()
-        Object.assign(this, user);
-    }
+  @Index()
+  @IsEmail(undefined, { message: 'Must be a valid email address' })
+  @Length(1, 255, { message: 'Email is empty' })
+  @Column({ unique: true })
+  email: string
 
-    @Exclude()
-    @PrimaryGeneratedColumn()
-    id: number;
+  @Index()
+  @Length(3, 255, { message: 'Must be at least 3 characters long' })
+  @Column({ unique: true })
+  username: string
 
-    @Index()
-    @IsEmail()
-    @Column({ unique: true })
-    email: string
+  @Exclude()
+  @Column()
+  @Length(6, 255, { message: 'Must be at least 6 characters long' })
+  password: string
 
-    @Index()
-    @Length(3, /* max */ 255, { message: 'Username must be at least 3 characters long!!' })
-    @Column({ unique: true })
-    username: string
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Post[]
 
-    @Exclude()
-    @Column()
-    @Length(6, 255)
-    password: string
+  @OneToMany(() => Vote, (vote) => vote.user)
+  votes: Vote[]
 
-    @CreateDateColumn()
-    createdAt: Date
-
-    @UpdateDateColumn()
-    updatedAt: Date
-
-    @BeforeInsert()
-    async hashPassword() {
-        this.password = await bcrypt.hash(this.password, 6)
-    }
-
-    toJSON() {
-        return classToPlain
-    }
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await bcrypt.hash(this.password, 6)
+  }
 }

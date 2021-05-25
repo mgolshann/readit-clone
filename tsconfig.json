@@ -11,6 +11,21 @@
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
       "sourceMap": true,
-      "esModuleInterop": true
+      "esModuleInterop": true,
+      // Strict stuff
+      // "strict": true,
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+      "strictFunctionTypes": true,
+      "strictBindCallApply": true,
+      // "strictPropertyInitialization": true,
+      "noImplicitThis": true,
+      // Extra
+      "alwaysStrict": true,
+      // "noUnusedLocals": true, // Enable error reporting when a local variables aren't read.
+      "noUnusedParameters": true,
+      "noImplicitReturns": true,
+      "noFallthroughCasesInSwitch": true,
+      "resolveJsonModule": true
    }
 }
